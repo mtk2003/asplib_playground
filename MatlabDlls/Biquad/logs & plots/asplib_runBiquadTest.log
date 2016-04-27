@@ -1,0 +1,6 @@
+[asplib] Successful loaded BiquadDll
+[asplib] initialize asplib_MatlabDll
+[asplib] successful created Biquad Filter with 10 frequency bands
+[asplib] destroy asplib_MatlabDll
+[asplib] sucessful destroyed Biquads
+[asplib] unloaded BiquadDll
