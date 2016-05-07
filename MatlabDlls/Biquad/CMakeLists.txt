@@ -44,5 +44,3 @@ if(EXISTS ${MATLAB_WKS})
 else()
   message(WARNING "Skipped installation of MatlabDll ${PROJECT_NAME} because ${MATLAB_WKS} doesn't exist.")
 endif()
-
-add_dependencies(${PROJECT_NAME} asplib)

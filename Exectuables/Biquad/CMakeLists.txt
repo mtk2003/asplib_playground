@@ -1,7 +1,6 @@
 # sets the solution name
 project(Exectuables_Biquad)
 
-
 # set here further source and header files, which should be relative to this file
 set(SOURCES main.cpp)
 
@@ -21,5 +20,3 @@ set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
 # sets the visual studio solution folder (nested projects)
 # NOTE: folders are separated with /
 set_property(TARGET ${PROJECT_NAME} PROPERTY FOLDER "Exectuables")
-
-add_dependencies(${PROJECT_NAME} asplib)

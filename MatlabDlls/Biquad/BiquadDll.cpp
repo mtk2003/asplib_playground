@@ -25,7 +25,7 @@
 #include <string>
 using namespace std;
 
-#include "Biquad/apslib_BiquadFactory.h"
+#include "asplib/Biquad/apslib_BiquadFactory.h"
 
 // Matlab include files
 #include <mex.h>
