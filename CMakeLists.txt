@@ -18,7 +18,7 @@ list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR}/depends/output/lib)
 
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/depends/build)
 execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" "${CMAKE_CURRENT_SOURCE_DIR}/cmake/depends"
-                        -DCMAKE_INSTALL_PREFIX=
+                        "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/depends/output"
                         ${OUTPUT_QUIET}
                         WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/depends/build")
                     
