@@ -10,8 +10,6 @@ asplib_source_group("${SOURCES}")
 # create the executable
 add_executable(${PROJECT_NAME} ${SOURCES})
 
-#find_package(asplib REQUIRED Biquad)
-
 # link against asplib Biquad component
 target_link_libraries(${PROJECT_NAME} asplib::Biquad)
 # sets the exectuable output file name

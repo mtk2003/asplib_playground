@@ -27,6 +27,7 @@ execute_process(COMMAND ${CMAKE_COMMAND} --build .
                         WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/depends/build")
 
 find_package(asplib 1.0 REQUIRED)
+find_package(KissFFT 1.30 REQUIRED)
 
 include(cmake/asplib_helpers.cmake)
 
@@ -53,7 +54,7 @@ endif()
 
 add_subdirectory(Exectuables)
 add_subdirectory(MatlabDlls)
-        
+
 # Print project configuration
 message(STATUS "${CMAKE_PROJECT_NAME} - Configuration:")
 message(STATUS "CMAKE_BUILD_TYPE:     ${CMAKE_BUILD_TYPE}")

@@ -15,6 +15,13 @@ message(STATUS "Downloading/Building asplib Playground project...")
 #list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR}/depends/output/)
 #list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR}/depends/output/lib)
 
+if (NOT ASPLIB_DEPENDS_SRC_PREFIX)
+  set(ASPLIB_DEPENDS_SRC_PREFIX ${CMAKE_BINARY_DIR}/src)
+  set(ASPLIB_DEPENDS_DOWNLOAD TRUE)
+else()
+  set(ASPLIB_DEPENDS_DOWNLOAD FALSE)
+endif()
+
 include(add_asplib.cmake)
 
 #set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
