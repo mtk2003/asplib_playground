@@ -159,6 +159,73 @@ DLL_EXPORT RET_ERR set_BiquadGains(single Gain)
     return ERR_NO_ERROR;
 }
 
+
+DLL_EXPORT RET_ERR set_BiquadCoefficients(mxArray *Coefficients, uint32 BiquadIdx, single C0, single D0)
+{
+    if (!Coefficients)
+    {
+        return ERR_INVALID_INPUT;
+    }
+
+    size_t rows = mxGetM(Coefficients);
+    size_t columns = mxGetN(Coefficients);
+
+    if (mxGetClassID(Coefficients) != mxSINGLE_CLASS || rows*columns != 5)
+    {
+      return ERR_INVALID_INPUT;
+    }
+    float *coeData = (float*)mxGetData(Coefficients);
+
+    ASPLIB_BIQUAD_COEFFICIENTS asplibCoefficients;
+    asplibCoefficients.a0 = coeData[0];
+    asplibCoefficients.a1 = coeData[1];
+    asplibCoefficients.a2 = coeData[2];
+    asplibCoefficients.b1 = coeData[3];
+    asplibCoefficients.b2 = coeData[4];
+
+    ASPLIB_ERR err = CBiquadFactory::set_BiquadCoefficients(g_BiquadHandle, &asplibCoefficients, BiquadIdx, C0, D0);
+    if (err != ASPLIB_ERR_NO_ERROR)
+    {
+      return ERR_INVALID_INPUT;
+    }
+
+    return ERR_NO_ERROR;
+}
+
+
+DLL_EXPORT RET_ERR set_BiquadsCoefficients(mxArray *Coefficients, single C0, single D0)
+{
+  if (!Coefficients)
+  {
+    return ERR_INVALID_INPUT;
+  }
+
+  size_t rows    = mxGetM(Coefficients);
+  size_t columns = mxGetN(Coefficients);
+
+  if (mxGetClassID(Coefficients) != mxSINGLE_CLASS || rows*columns != 5)
+  {
+    return ERR_INVALID_INPUT;
+  }
+  float *coeData = (float*)mxGetData(Coefficients);
+
+  ASPLIB_BIQUAD_COEFFICIENTS asplibCoefficients;
+  asplibCoefficients.a0 = coeData[0];
+  asplibCoefficients.a1 = coeData[1];
+  asplibCoefficients.a2 = coeData[2];
+  asplibCoefficients.b1 = coeData[3];
+  asplibCoefficients.b2 = coeData[4];
+
+  ASPLIB_ERR err = CBiquadFactory::set_BiquadCoefficients(g_BiquadHandle, &asplibCoefficients, C0, D0);
+  if (err != ASPLIB_ERR_NO_ERROR)
+  {
+    return ERR_INVALID_INPUT;
+  }
+
+  return ERR_NO_ERROR;
+}
+
+
 DLL_EXPORT RET_ERR init_asplib(single SampleFrequency, uint32 MaxChannels, uint32 MaxFrameSize)
 {
     if (MaxChannels == 0 || MaxFrameSize == 0 || SampleFrequency <= 0.0f)
