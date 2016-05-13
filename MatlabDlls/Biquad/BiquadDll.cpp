@@ -68,6 +68,9 @@ void destroy_Biquads()
     }
 }
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 // ---------------------------------------- Biquad functions ----------------------------------------
 DLL_EXPORT RET_ERR create_Biquad(uint32 BiquadQuantity)
 {
@@ -294,3 +297,6 @@ DLL_EXPORT void destroy()
 
     destroy_Biquads();
 }
+#ifdef __cplusplus
+}
+#endif
