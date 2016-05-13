@@ -34,9 +34,9 @@ using namespace std;
 using namespace asplib;
 
 // buffers
-single *g_Inbuffers = NULL;
+single *g_Inbuffers  = NULL;
 single *g_Outbuffers = NULL;
-single **g_Channels = NULL;
+single **g_Channels  = NULL;
 
 // signal processing parameters
 unsigned int g_MaxChannels = 0;     // max in-/output channels
@@ -57,42 +57,41 @@ void destroy_Biquads();
 void destroy_Biquads()
 {
   ASPLIB_ERR err = CBiquadFactory::destroy_Biquads(&g_BiquadHandle);
-  if (err == ASPLIB_ERR_NO_ERROR)
+  if (err != ASPLIB_ERR_NO_ERROR)
   {
-    mexPrintf("%ssucessful destroyed Biquads\n", ASPLIB_LOGGING_TAG);
-  }
-  else
-  {
-    string errStr = string(ASPLIB_LOGGING_TAG) + string("Error! Some error occured by destroying Biquads!\n");
+    string errStr = string(ASPLIB_LOGGING_TAG) + string("Error! Some error occured by destroying Biquads.\n");
     mexErrMsgTxt(errStr.c_str());
+    return;
   }
+  
+  mexPrintf("%ssucessful destroyed Biquads\n", ASPLIB_LOGGING_TAG);
 }
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 // ---------------------------------------- Biquad functions ----------------------------------------
-DLL_EXPORT RET_ERR create_Biquad(uint32 BiquadQuantity)
+DLL_EXPORT RET_ERR create_Biquad(uint32 BiquadAmount)
 {
   if (g_BiquadHandle)
   {
     const uint32_t maxOldFreqBands = CBiquadFactory::get_maxBiquads(g_BiquadHandle);
     CBiquadFactory::destroy_Biquads(&g_BiquadHandle);
 
-    mexPrintf("%sdeleted old Biquad Filter with %i frequency bands\n", ASPLIB_LOGGING_TAG, maxOldFreqBands);
+    mexPrintf("%sdeleted biquad handle with %i biquad filters\n", ASPLIB_LOGGING_TAG, maxOldFreqBands);
   }
   // ToDo: add support for several optimizations
-  g_BiquadHandle = CBiquadFactory::get_Biquads(BiquadQuantity, g_SampleFrequency, ASPLIB_OPT_NATIVE);
+  g_BiquadHandle = CBiquadFactory::get_Biquads(BiquadAmount, g_SampleFrequency, ASPLIB_OPT_NATIVE);
 
   if (!g_BiquadHandle)
   {
     // Evaluate get_Biquads function error
-    string errStr = string(ASPLIB_LOGGING_TAG) + string("Error! Input pointers are NULL!\n");
+    string errStr = string(ASPLIB_LOGGING_TAG) + string("Error! Failed to created biquad handle.\n");
     mexErrMsgTxt(errStr.c_str());
     return ERR_FATAL_ERROR;
   }
 
-  mexPrintf("%ssuccessful created Biquad Filter with %i frequency bands\n", ASPLIB_LOGGING_TAG, BiquadQuantity);
+  mexPrintf("%ssuccessful created biquad handle with %i biquad fílters\n", ASPLIB_LOGGING_TAG, CBiquadFactory::get_maxBiquads(g_BiquadHandle));
 
   return ERR_NO_ERROR;
 }
@@ -101,21 +100,14 @@ DLL_EXPORT RET_ERR process_Biquads(single *Data, uint32 MaxFrames)
 {
   if (Data == NULL || !MaxFrames)
   {
-    string errStr = string(ASPLIB_LOGGING_TAG) + string("Error! Input pointers are NULL!\n");
+    string errStr = string(ASPLIB_LOGGING_TAG) + string("Error! Failed to created biquad handle.\n");
     mexErrMsgTxt(errStr.c_str());
     return ERR_INVALID_INPUT;
   }
 
-  if (!g_BiquadHandle && !g_InitSuccess)
+  if (!g_BiquadHandle || !g_InitSuccess)
   {
-    string errStr = string(ASPLIB_LOGGING_TAG) + string("Error! asplib_MatlabDll was not initialized!\n");
-    mexErrMsgTxt(errStr.c_str());
-    return ERR_FATAL_ERROR;
-  }
-
-  if (!g_BiquadHandle)
-  {
-    string errStr = string(ASPLIB_LOGGING_TAG) + string("Error! No Biquads created! Call create_Biquads first, before calling process_Biquads!\n");
+    string errStr = string(ASPLIB_LOGGING_TAG) + string("Error! BiquadDll is not correctly initialized.\n");
     mexErrMsgTxt(errStr.c_str());
     return ERR_FATAL_ERROR;
   }
@@ -141,7 +133,8 @@ DLL_EXPORT RET_ERR set_BiquadGain(uint32 BiquadIdx, single Gain)
 
   if (CBiquadFactory::set_constQPeakingParams(g_BiquadHandle, Gain, BiquadIdx) != ASPLIB_ERR_NO_ERROR)
   {
-    // ToDo: throw some error!
+    string errStr = string(ASPLIB_LOGGING_TAG) + string("Error! Failed to set gain value for biquad.\n");
+    mexErrMsgTxt(errStr.c_str());
     return ERR_INVALID_INPUT;
   }
 
@@ -155,7 +148,8 @@ DLL_EXPORT RET_ERR set_BiquadGains(single Gain)
 
   if (CBiquadFactory::set_constQPeakingParams(g_BiquadHandle, Gain) != ASPLIB_ERR_NO_ERROR)
   {
-    // ToDo: throw some error!
+    string errStr = string(ASPLIB_LOGGING_TAG) + string("Error! Failed to set gain values for biquads.\n");
+    mexErrMsgTxt(errStr.c_str());
     return ERR_INVALID_INPUT;
   }
 
@@ -165,34 +159,39 @@ DLL_EXPORT RET_ERR set_BiquadGains(single Gain)
 
 DLL_EXPORT RET_ERR set_BiquadCoefficients(mxArray *Coefficients, uint32 BiquadIdx, single C0, single D0)
 {
-    if (!Coefficients)
-    {
-        return ERR_INVALID_INPUT;
-    }
+  if (!Coefficients)
+  {
+    string errStr = string(ASPLIB_LOGGING_TAG) + string("Error! No Coefficients array available.\n");
+    mexErrMsgTxt(errStr.c_str());
+    return ERR_INVALID_INPUT;
+  }
 
-    size_t rows = mxGetM(Coefficients);
-    size_t columns = mxGetN(Coefficients);
+  size_t rows = mxGetM(Coefficients);
+  size_t columns = mxGetN(Coefficients);
 
-    if (mxGetClassID(Coefficients) != mxSINGLE_CLASS || rows*columns != 5)
-    {
-      return ERR_INVALID_INPUT;
-    }
-    float *coeData = (float*)mxGetData(Coefficients);
+  if (mxGetClassID(Coefficients) != mxSINGLE_CLASS || rows*columns != 5)
+  {
+    string errStr = string(ASPLIB_LOGGING_TAG) + string("Error! Coefficients array input format not supported.\n");
+    return ERR_INVALID_INPUT;
+  }
+  float *coeData = (float*)mxGetData(Coefficients);
 
-    ASPLIB_BIQUAD_COEFFICIENTS asplibCoefficients;
-    asplibCoefficients.a0 = coeData[0];
-    asplibCoefficients.a1 = coeData[1];
-    asplibCoefficients.a2 = coeData[2];
-    asplibCoefficients.b1 = coeData[3];
-    asplibCoefficients.b2 = coeData[4];
+  ASPLIB_BIQUAD_COEFFICIENTS asplibCoefficients;
+  asplibCoefficients.a0 = coeData[0];
+  asplibCoefficients.a1 = coeData[1];
+  asplibCoefficients.a2 = coeData[2];
+  asplibCoefficients.b1 = coeData[3];
+  asplibCoefficients.b2 = coeData[4];
 
-    ASPLIB_ERR err = CBiquadFactory::set_BiquadCoefficients(g_BiquadHandle, &asplibCoefficients, BiquadIdx, C0, D0);
-    if (err != ASPLIB_ERR_NO_ERROR)
-    {
-      return ERR_INVALID_INPUT;
-    }
+  ASPLIB_ERR err = CBiquadFactory::set_BiquadCoefficients(g_BiquadHandle, &asplibCoefficients, BiquadIdx, C0, D0);
+  if (err != ASPLIB_ERR_NO_ERROR)
+  {
+    string errStr = string(ASPLIB_LOGGING_TAG) + string("Error! Failed to set coefficients for biquad.\n");
+    mexErrMsgTxt(errStr.c_str());
+    return ERR_INVALID_INPUT;
+  }
 
-    return ERR_NO_ERROR;
+  return ERR_NO_ERROR;
 }
 
 
@@ -200,6 +199,8 @@ DLL_EXPORT RET_ERR set_BiquadsCoefficients(mxArray *Coefficients, single C0, sin
 {
   if (!Coefficients)
   {
+    string errStr = string(ASPLIB_LOGGING_TAG) + string("Error! No Coefficients array available.\n");
+    mexErrMsgTxt(errStr.c_str());
     return ERR_INVALID_INPUT;
   }
 
@@ -208,6 +209,8 @@ DLL_EXPORT RET_ERR set_BiquadsCoefficients(mxArray *Coefficients, single C0, sin
 
   if (mxGetClassID(Coefficients) != mxSINGLE_CLASS || rows*columns != 5)
   {
+    string errStr = string(ASPLIB_LOGGING_TAG) + string("Error! Coefficients array input format not supported.\n");
+    mexErrMsgTxt(errStr.c_str());
     return ERR_INVALID_INPUT;
   }
   float *coeData = (float*)mxGetData(Coefficients);
@@ -222,6 +225,8 @@ DLL_EXPORT RET_ERR set_BiquadsCoefficients(mxArray *Coefficients, single C0, sin
   ASPLIB_ERR err = CBiquadFactory::set_BiquadCoefficients(g_BiquadHandle, &asplibCoefficients, C0, D0);
   if (err != ASPLIB_ERR_NO_ERROR)
   {
+    string errStr = string(ASPLIB_LOGGING_TAG) + string("Error! Failed to set coefficients for biquads.\n");
+    mexErrMsgTxt(errStr.c_str());
     return ERR_INVALID_INPUT;
   }
 
@@ -233,24 +238,23 @@ DLL_EXPORT RET_ERR init_asplib(single SampleFrequency, uint32 MaxChannels, uint3
 {
   if (MaxChannels == 0 || MaxFrameSize == 0 || SampleFrequency <= 0.0f)
   {
-    string errStr = string(ASPLIB_LOGGING_TAG) + string("Error! Invalid input! MaxFrames == 0 or MaxChannels == 0 or MaxFrameSize == 0 or ProcessingData_fA <= 0.0f\n");
+    string errStr = string(ASPLIB_LOGGING_TAG) + string("Error! MaxFrames == 0 or MaxChannels == 0 or MaxFrameSize == 0 or ProcessingData_fA <= 0.0f\n");
     mexErrMsgTxt(errStr.c_str());
     return ERR_INVALID_INPUT;
   }
 
-  mexPrintf("%sinitialize asplib_MatlabDll\n", ASPLIB_LOGGING_TAG);
-  //mexPrintf("%screated asplib_Biquads\n", ASPLIB_LOGGING_TAG);
-  g_MaxChannels = MaxChannels;
-  g_MaxFrameSize = MaxFrameSize;
+  mexPrintf("%sinitialize BiquadDll\n", ASPLIB_LOGGING_TAG);
+  g_MaxChannels     = MaxChannels;
+  g_MaxFrameSize    = MaxFrameSize;
   g_SampleFrequency = SampleFrequency;
 
   // create internal buffers
-  g_Inbuffers = new single[g_MaxChannels*g_MaxFrameSize];
+  g_Inbuffers  = new single[g_MaxChannels*g_MaxFrameSize];
   g_Outbuffers = new single[g_MaxChannels*g_MaxFrameSize];
-  g_Channels = new single*[g_MaxChannels];
-  if (g_Inbuffers == NULL || g_Outbuffers == NULL || g_Channels == NULL)
+  g_Channels   = new single*[g_MaxChannels];
+  if (!g_Inbuffers || !g_Outbuffers || !g_Channels)
   {
-    string errStr = string(ASPLIB_LOGGING_TAG) + string("Error! Could not create internal! Not enough free memory?\n");
+    string errStr = string(ASPLIB_LOGGING_TAG) + string("Error! Could not create internal buffers. Not enough free memory?\n");
     mexErrMsgTxt(errStr.c_str());
     delete[] g_Inbuffers;
     delete[] g_Outbuffers;
@@ -270,32 +274,25 @@ DLL_EXPORT RET_ERR init_asplib(single SampleFrequency, uint32 MaxChannels, uint3
 
 DLL_EXPORT void destroy()
 {
-  mexPrintf("%sdestroy asplib_MatlabDll\n", ASPLIB_LOGGING_TAG);
+  mexPrintf("%sdestroying BiquadDll\n", ASPLIB_LOGGING_TAG);
 
-  if (g_Channels)
-  {
-    delete[] g_Channels;
-    g_Channels = NULL;
-  }
-
-  if (g_Inbuffers)
-  {
-    delete[] g_Inbuffers;
-    g_Inbuffers = NULL;
-  }
-
-  if (g_Outbuffers)
-  {
-    delete[] g_Outbuffers;
-    g_Outbuffers = NULL;
-  }
+  delete[] g_Channels;
+  g_Channels = NULL;
+    
+  delete[] g_Inbuffers;
+  g_Inbuffers = NULL;
+    
+  delete[] g_Outbuffers;
+  g_Outbuffers = NULL;
 
   g_SampleFrequency = 0.0f;
-  g_Channels = 0;
-  g_MaxChannels = 0;
-  g_InitSuccess = false;
+  g_Channels        = 0;
+  g_MaxChannels     = 0;
+  g_InitSuccess     = false;
 
   destroy_Biquads();
+  
+  mexPrintf("%sdestroyed BiquadDll\n", ASPLIB_LOGGING_TAG);
 }
 #ifdef __cplusplus
 }
