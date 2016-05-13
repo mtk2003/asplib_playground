@@ -1,4 +1,4 @@
-% this script unloads the asplib_Matlab.dll library and destroys all data
+% this script unloads the BiquadDll and releases all requested memory
 
 %/*
 % * Copyright (C) 2014 Achim Turan, Achim.Turan@o2online.de
@@ -25,9 +25,9 @@
 
 
 if (libisloaded('BiquadDll'))
-	calllib('BiquadDll', 'destroy')
-	unloadlibrary('BiquadDll');
-    disp('[asplib] unloaded BiquadDll');
+  calllib('BiquadDll', 'destroy')
+  unloadlibrary('BiquadDll');
+  disp('[asplib] unloaded BiquadDll');
 else
-	disp('[asplib] BiquadDll was always unloaded');
+  disp('[asplib] BiquadDll was already unloaded');
 end

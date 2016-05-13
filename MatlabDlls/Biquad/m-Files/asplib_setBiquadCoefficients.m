@@ -1,5 +1,8 @@
-% this function sets the gain value for all earlier created biquad filters
-%   Gain = gain value for the that will be set in all biquad filters
+% this function sets the biquad coefficients for a specific biquad filter
+%   Coefficients = one dimensional array, which contains the biquad coefficients [a0, a1, a2, b1, b2]
+%   BiquadIdx    = index of the corresponding biquad filters
+%   C0           = common gain value for this biquad filter, default is 1.0
+%   D0           = gain value for mixing the input signal into the output signal, default is 0.0
 
 
 %/*
@@ -26,12 +29,12 @@
 
 
 
-function asplib_setBiquadGains(Gain)
-  if not(libisloaded('BiquadDll'))
-    disp('[asplib] BiquadDll was not loaded! Please run asplib_load_BiquadDll.m first!');
-    return;
-  end
-  
-  % ToDo evaluate err
-  err = calllib('BiquadDll', 'set_BiquadGains', single(Gain));
+function asplib_setBiquadCoefficient(Coefficients, BiquadIdx, C0, D0)
+    if not(libisloaded('BiquadDll'))
+      disp('[asplib] BiquadDll is not loaded! Please run asplib_load_BiquadDll.m first!');
+      return;
+    end
+   
+    % ToDo evaluate err
+    err = calllib('BiquadDll', 'set_BiquadCoefficients', single(Coefficients), uint32(BiquadIdx), single(C0), single(D0));
 end

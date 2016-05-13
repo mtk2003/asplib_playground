@@ -28,7 +28,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
                                            $<BUILD_INTERFACE:${MATLAB_INCLUDE_DIR}>)
 
 # link against asplib Biquad component
-target_link_libraries(${PROJECT_NAME} asplib::Biquad ${MATLAB_MEX_LIBRARY})
+target_link_libraries(${PROJECT_NAME} asplib::Biquad ${MATLAB_MEX_LIBRARY} ${MATLAB_MX_LIBRARY})
 # sets the exectuable output file name
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
 
