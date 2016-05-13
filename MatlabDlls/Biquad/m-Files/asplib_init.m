@@ -1,4 +1,8 @@
-% this script is used to process created Biquads
+% initializes asplib's biquad handle for MATLAB
+%   SampleFrequency = sample frequency of the input and output signal
+%   MaxChannels     = maximum amount of channels to process
+%   MaxFrameSize    = maximum amount of samples per frame
+
 
 %/*
 % * Copyright (C) 2014 Achim Turan, Achim.Turan@o2online.de
@@ -25,13 +29,11 @@
 
 
 function [] = asplib_init(SampleFrequency, MaxChannels, MaxFrameSize)
-%TEST Summary of this function goes here
-%   Detailed explanation goes here
-	if not(libisloaded('BiquadDll'))
-		disp('[asplib] BiquadDll is not loaded! Please run asplib_load_BiquadDll.m first!');
-		%return;
-	end
-	
-	% ToDo evaluate err
-	err = calllib('BiquadDll', 'init_asplib', single(SampleFrequency), uint32(MaxChannels), uint32(MaxFrameSize));
+  if not(libisloaded('BiquadDll'))
+    disp('[asplib] BiquadDll was not loaded! Please run asplib_load_BiquadDll.m first!');
+    %return;
+  end
+  
+  % ToDo evaluate err
+  err = calllib('BiquadDll', 'init_asplib', single(SampleFrequency), uint32(MaxChannels), uint32(MaxFrameSize));
 end

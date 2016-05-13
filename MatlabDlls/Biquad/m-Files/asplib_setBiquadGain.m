@@ -1,4 +1,7 @@
-% this script is used to set a Gain value for one Biquad
+% this function sets the gain value for a specific biquad filter
+%   BiquadIdx = index of the biquad
+%   Gain      = gain value for the corresponding biquad filter
+
 
 %/*
 % * Copyright (C) 2014 Achim Turan, Achim.Turan@o2online.de
@@ -25,13 +28,11 @@
 
 
 function asplib_setBiquadGain(BiquadIdx, Gain)
-%ASPLIB_SETBIQUADGAIN Summary of this function goes here
-%   Detailed explanation goes here
-    if not(libisloaded('BiquadDll'))
-		disp('[asplib] BiquadDll is not loaded! Please run asplib_load_BiquadDll.m first!');
-		return;
-    end
-    
-    % ToDo evaluate err
-    err = calllib('BiquadDll', 'set_BiquadGain', uint32(BiquadIdx), single(Gain));
+  if not(libisloaded('BiquadDll'))
+    disp('[asplib] BiquadDll was not loaded! Please run asplib_load_BiquadDll.m first!');
+    return;
+  end
+  
+  % ToDo evaluate err
+  err = calllib('BiquadDll', 'set_BiquadGain', uint32(BiquadIdx), single(Gain));
 end

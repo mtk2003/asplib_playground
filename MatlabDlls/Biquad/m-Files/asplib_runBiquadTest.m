@@ -1,4 +1,4 @@
-% this script is used to create and test Biquads from asplib
+% this script tests the whole biquad implementation with the Non-Const-Q design equations for an equalizer
 
 %/*
 % * Copyright (C) 2014 Achim Turan, Achim.Turan@o2online.de
@@ -21,6 +21,7 @@
 % * If not, see <http://www.gnu.org/licenses/>.
 % *
 % */
+
 
 % reset workspace
 clc

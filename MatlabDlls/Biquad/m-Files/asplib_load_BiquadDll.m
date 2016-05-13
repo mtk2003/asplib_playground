@@ -1,4 +1,5 @@
-% this script loads the asplib_Matlab.dll library
+% this scripts loads the BiquadDll and shows the loaded dll functions in the workspace
+
 
 %/*
 % * Copyright (C) 2014 Achim Turan, Achim.Turan@o2online.de
@@ -23,7 +24,6 @@
 % */
 
 
-
 % reset workspace
 clc
 clear all;
@@ -35,15 +35,19 @@ dll = 'BiquadDll';
 dllHeader = 'BiquadDll.h';
 
 if (libisloaded('BiquadDll'))
-	disp('[asplib] Reloading BiquadDll');
-	calllib('BiquadDll', 'destroy')
-	unloadlibrary('BiquadDll');
+  disp('[asplib] Reloading BiquadDll');
+  calllib('BiquadDll', 'destroy')
+  unloadlibrary('BiquadDll');
 end
 
 %hfile = fullfile(matlabroot,'extern','include','matrix.h');
 %for details of the loadlibrary function see:
 %http://www.mathworks.de/de/help/matlab/ref/loadlibrary.html
 [dllnotfound, dllwarnings] = loadlibrary(dll, dllHeader, 'alias', 'BiquadDll');
+
+libfunctions(dll) % show all available dll functions
+%libfunctionsview BiquadDll % show dll function signatures
+
 disp('[asplib] Successful loaded BiquadDll');
 
 %ToDo: call init with specific parameters

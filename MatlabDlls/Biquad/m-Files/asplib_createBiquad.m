@@ -1,4 +1,6 @@
-% this script is used to create a Biquad Filter
+% creates an asplib biquad handle
+%   BiquadAmount = maximum amount of biquad stages that should be created inside the biquad handle
+
 
 %/*
 % * Copyright (C) 2014 Achim Turan, Achim.Turan@o2online.de
@@ -25,13 +27,11 @@
 
 
 function asplib_createBiquad(BiquadAmount)
-%ASPLIB_CREATEBIQUADS Summary of this function goes here
-%   Detailed explanation goes here
-    if not(libisloaded('BiquadDll'))
-		disp('[asplib] BiquadDll is not loaded! Please run asplib_load_BiquadDll.m first!');
-		return;
-    end
-    
-    % ToDo evaluate err
-	[ret] = calllib('BiquadDll', 'create_Biquad', uint32(BiquadAmount));
+  if not(libisloaded('BiquadDll'))
+    disp('[asplib] BiquadDll was not loaded! Please run asplib_load_BiquadDll.m first!');
+    return;
+  end
+  
+  % ToDo evaluate err
+ [ret] = calllib('BiquadDll', 'create_Biquad', uint32(BiquadAmount));
 end

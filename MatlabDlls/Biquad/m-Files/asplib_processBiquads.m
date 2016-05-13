@@ -1,4 +1,7 @@
-% this script is used to process created Biquads
+% filter an input signal with the earlier created biquad handle
+%   Signal = input signal
+%   y      = output signal
+
 
 %/*
 % * Copyright (C) 2014 Achim Turan, Achim.Turan@o2online.de
@@ -23,17 +26,15 @@
 % */
 
 
-function [y] = asplib_processBiquads(signal)
-%TEST Summary of this function goes here
-%   Detailed explanation goes here
-	if not(libisloaded('BiquadDll'))
-		disp('[asplib] BiquadDll is not loaded! Please run asplib_load_BiquadDll.m first!');
-		return;
-	end
+function [y] = asplib_processBiquads(Signal)
+  if not(libisloaded('BiquadDll'))
+    disp('[asplib] BiquadDll was not loaded! Please run asplib_load_BiquadDll.m first!');
+    return;
+  end
 
-	mSize = uint32(length(signal));
-	pSignal = libpointer('singlePtr', signal);
-	
-	% ToDo evaluate err
-	[err, y] = calllib('BiquadDll', 'process_Biquads', pSignal, mSize);
+  mSize = uint32(length(Signal));
+  pSignal = libpointer('singlePtr', Signal);
+  
+  % ToDo evaluate err
+  [err, y] = calllib('BiquadDll', 'process_Biquads', pSignal, mSize);
 end
