@@ -1,4 +1,5 @@
-% this script tests the SpectrumVisProcessor module from asplib
+% this scripts loads the SpectrumVisProcessorDll and shows the loaded dll functions in the workspace
+
 
 %/*
 % * Copyright (C) 2014 Achim Turan, Achim.Turan@o2online.de
@@ -22,43 +23,29 @@
 % *
 % */
 
+
 % reset workspace
 clc
 clear all;
 
-% load asplib_SpectrumVisProcessorDll
-asplib_load_SpectrumVisProcessorDll()
+% load asplib_MatlabDll
+addpath(fullfile(pwd,'bin')) %add bin folder to path
 
-frameSize = 256;
-nFrames = 1;
-dBFSScaleVal = 2.0/frameSize;
-maxSampleBits = 32;
-max_dBFSVal = (6.0206*maxSampleBits + 1.761)*0.1;
-fA = 44100;
-f0FFTBin = 11;
-f0Shift = 1.3;
-f0 = 44100/frameSize*f0FFTBin*f0Shift;
-t = 0:1/fA:nFrames*frameSize/fA;
-A = 1.0;
-x = A*sin(2*pi*f0*t);
-figure(1)
-plot(t, x)
-figure(2)
-X = max_dBFSVal + 20.0*log10(abs(fft(x(1:frameSize)*dBFSScaleVal)));
-bar(max(X(1:frameSize/2)/max_dBFSVal, 0));
-xlim([1, frameSize/2])
+dll = 'SpectrumVisProcessorDll';
+dllHeader = 'SpectrumVisProcessorDll.h';
 
+if (libisloaded('SpectrumVisProcessorDll'))
+  disp('[asplib] Reloading SpectrumVisProcessorDll');
+  calllib('SpectrumVisProcessorDll', 'DestroySpectrumVisProcessor')
+  unloadlibrary('SpectrumVisProcessorDll');
+end
 
-asplib_createSpectrumVisProcessor(frameSize)
+%hfile = fullfile(matlabroot,'extern','include','matrix.h');
+%for details of the loadlibrary function see:
+%http://www.mathworks.de/de/help/matlab/ref/loadlibrary.html
+[dllnotfound, dllwarnings] = loadlibrary(dll, dllHeader, 'alias', 'SpectrumVisProcessorDll');
 
-y = asplib_processSpectrumVisProcessor(x);
+libfunctions(dll) % show all available dll functions
+%libfunctionsview SpectrumVisProcessorDll % show dll function signatures
 
-asplib_destroySpectrumVisProcessor()
-
-% unload asplib_MatlabDll
-asplib_unload_SpectrumVisProcessorDll()
-
-figure(3)
-y = max_dBFSVal + y;
-bar(max(y(1:frameSize/2)/max_dBFSVal, 0))
-xlim([1, frameSize/2])
+disp('[asplib] Successful loaded SpectrumVisProcessorDll');

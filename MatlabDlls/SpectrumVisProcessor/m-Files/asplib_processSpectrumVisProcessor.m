@@ -1,4 +1,4 @@
-% this script is used to process created Biquads
+% this script processes float samples with the SpectrumVisProcessor module from asplib
 
 %/*
 % * Copyright (C) 2014 Achim Turan, Achim.Turan@o2online.de
@@ -26,14 +26,13 @@
 function [Out] = asplib_processSpectrumVisProcessor(In)
 %TEST Summary of this function goes here
 %   Detailed explanation goes here
-	if not(libisloaded('asplib_MatlabDll'))
-		disp('[asplib] asplib_MatlabDll is not loaded! Please run asplib_load_MatlabDll.m first!');
-		return;
-	end
+	if not(libisloaded('SpectrumVisProcessorDll'))
+    disp('[asplib] SpectrumVisProcessorDll is not loaded! Please run asplib_load_SpectrumVisProcessorDll.m first!');
+    return;
+  end
 
 	pIn = libpointer('singlePtr', In);
 	
 	% ToDo evaluate err
-	[err, Out] = calllib('asplib_MatlabDll', 'process_SpectrumVisProcessor', pIn);
+	[err, Out] = calllib('SpectrumVisProcessorDll', 'ProcessSpectrumVisProcessor', pIn);
 end
-

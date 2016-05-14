@@ -1,4 +1,4 @@
-% this script creates the SpectrumVisProcessor
+% this script unloads the SpectrumVisProcessorDll and releases all requested memory
 
 %/*
 % * Copyright (C) 2014 Achim Turan, Achim.Turan@o2online.de
@@ -24,14 +24,10 @@
 
 
 
-function asplib_createSpectrumVisProcessor(FrameSize)
-%ASPLIB_CREATESPECTRUMVISPROCESSOR Summary of this function goes here
-%   Detailed explanation goes here
-  if not(libisloaded('SpectrumVisProcessorDll'))
-    disp('[asplib] SpectrumVisProcessorDll is not loaded! Please run asplib_load_SpectrumVisProcessorDll.m first!');
-    return;
-  end
-    
-    % ToDo evaluate err
-	[ret] = calllib('SpectrumVisProcessorDll', 'CreateSpectrumVisProcessor', uint32(FrameSize));
+if (libisloaded('SpectrumVisProcessorDll'))
+  calllib('SpectrumVisProcessorDll', 'DestroySpectrumVisProcessor')
+  unloadlibrary('SpectrumVisProcessorDll');
+  disp('[asplib] unloaded SpectrumVisProcessorDll');
+else
+  disp('[asplib] SpectrumVisProcessorDll was already unloaded');
 end
