@@ -41,7 +41,7 @@ if(WIN32)
       # Assume people are generally using 7.1,
       # if using 7.0 need to link to: ../extern/lib/win32/microsoft/msvc70
       set(MATLAB_ROOT "[HKEY_LOCAL_MACHINE\\SOFTWARE\\MathWorks\\MATLAB\\${Matlab_FIND_VERSION};MATLABROOT]/extern/lib/win32/microsoft/msvc71")
-    elseif(${CMAKE_GENERATOR} MATCHES "Visual Studio 12 2013 Win64")
+    elseif(${CMAKE_GENERATOR} MATCHES "Visual Studio 12 2013 Win64" OR ${CMAKE_GENERATOR} MATCHES "Visual Studio 14 2015 Win64")
       message(STATUS "PACKAGE_FIND_VERSION:${PACKAGE_FIND_VERSION}")
       message(STATUS "PACKAGE_VERSION:${PACKAGE_VERSION}")
       message(STATUS "Matlab_VERSION:${Matlab_VERSION}")
