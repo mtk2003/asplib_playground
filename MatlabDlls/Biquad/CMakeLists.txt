@@ -1,7 +1,7 @@
 # sets the solution name
 project(BiquadDll)
 
-find_package(Matlab 8.1 REQUIRED)
+find_package(Matlab 8.3 REQUIRED)
 
 # set here further source and header files, which should be relative to this file
 set(SOURCES BiquadDll.cpp)
