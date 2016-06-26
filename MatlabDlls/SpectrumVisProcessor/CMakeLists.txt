@@ -1,12 +1,12 @@
 # sets the solution name
-project(BiquadDll)
+project(SpectrumVisProcessorDll)
 
 find_package(Matlab 8.1 REQUIRED)
 
 # set here further source and header files, which should be relative to this file
-set(SOURCES BiquadDll.cpp)
+set(SOURCES SpectrumVisProcessorDll.cpp)
 
-set(HEADERS BiquadDll.h
+set(HEADERS SpectrumVisProcessorDll.h
             ${CMAKE_CURRENT_SOURCE_DIR}/../Common/typedefs.h)
 
 # this will create filters in the visual studio solution
@@ -28,9 +28,11 @@ target_include_directories(${PROJECT_NAME} PRIVATE
                                            $<BUILD_INTERFACE:${MATLAB_INCLUDE_DIR}>
                                            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
                                            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../Common>)
+                                           
+target_compile_definitions(${PROJECT_NAME} PRIVATE )
 
-# link against asplib Biquad component
-target_link_libraries(${PROJECT_NAME} asplib::Biquad ${MATLAB_MEX_LIBRARY} ${MATLAB_MX_LIBRARY})
+# link against asplib SpectrumVisProcessor component
+target_link_libraries(${PROJECT_NAME} asplib::SpectrumVisProcessor ${MATLAB_MEX_LIBRARY} ${MATLAB_MX_LIBRARY})
 # sets the exectuable output file name
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
 
@@ -42,7 +44,7 @@ set_property(TARGET ${PROJECT_NAME} PROPERTY FOLDER "MatlabDlls")
 if(EXISTS ${MATLAB_WKS})
   install(TARGETS ${PROJECT_NAME} DESTINATION ${MATLAB_WKS}/asplib_playground/bin)
   install(FILES ${HEADERS} DESTINATION ${MATLAB_WKS}/asplib_playground/bin)
-  install(DIRECTORY m-Files/ DESTINATION ${MATLAB_WKS}/asplib_playground FILES_MATCHING PATTERN "*.m")
+  install(DIRECTORY m-Files/ DESTINATION ${MATLAB_WKS}/asplib_playground FILES_MATCHING PATTERN "*.m;*.wav")
 else()
   message(WARNING "Skipped installation of MatlabDll ${PROJECT_NAME} because ${MATLAB_WKS} doesn't exist.")
 endif()
