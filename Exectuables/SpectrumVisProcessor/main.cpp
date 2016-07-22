@@ -33,16 +33,17 @@ using namespace asplib;
 int main()
 {
   const uint32_t frameSize = 128;
+  const uint32_t fftFrameSize = 2048;
   ASPLIB_ERR err = ASPLIB_ERR_NO_ERROR;
 
-  float in[frameSize];
-  float out[frameSize];
+  float in[fftFrameSize];
+  float out[fftFrameSize];
   memset(in, 0, sizeof(float)*frameSize);
   memset(out, 0, sizeof(float)*frameSize);
 
   CSpectrumVisProcessor processor;
   CSpectrumVisProcessorConfigurator config;
-  err = processor.Create(config, frameSize);
+  err = processor.Create(config, frameSize, fftFrameSize);
   if (err != ASPLIB_ERR_NO_ERROR)
   {
     return err;
