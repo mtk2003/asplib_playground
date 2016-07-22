@@ -16,18 +16,12 @@ message(STATUS "CMAKE_BINARY_DIR=${CMAKE_BINARY_DIR}")
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR}/depends/output/)
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR}/depends/output/lib)
 
-file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/depends/build)
-execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" "${CMAKE_CURRENT_SOURCE_DIR}/cmake/depends"
-                        "-DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/depends/output"
-                        ${OUTPUT_QUIET}
-                        WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/depends/build")
-                    
-execute_process(COMMAND ${CMAKE_COMMAND} --build .
-                        ${OUTPUT_QUIET}
-                        WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/depends/build")
-
-find_package(asplib 1.0 REQUIRED)
-find_package(KissFFT 1.30 REQUIRED)
+include(cmake/gitCloneProject.cmake)
+git_clone_project(PROJ                asplib
+                  GIT_REPOSITORY      https://github.com/AchimTuran/asplib
+                  GIT_TAG             add-spectrum-vis-processor)
+set(ASPLIB_MODULES_TO_BUILD SpectrumVisProcessor Biquad ComputeDeviceInfo)
+add_subdirectory(${asplib_SOURCE_DIR} ${asplib_BINARY_DIR})
 
 include(cmake/asplib_helpers.cmake)
 
