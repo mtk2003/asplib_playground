@@ -52,7 +52,7 @@
 extern "C" {
 #endif
 
-DLL_EXPORT RET_ERR CreateSpectrumVisProcessor(uint32 FrameSize);
+DLL_EXPORT RET_ERR CreateSpectrumVisProcessor(uint32 FrameSize, uint32 fftFrameSize);
 DLL_EXPORT RET_ERR DestroySpectrumVisProcessor();
 DLL_EXPORT RET_ERR ProcessSpectrumVisProcessor(single *In);
 

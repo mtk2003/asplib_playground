@@ -52,9 +52,9 @@ extern "C" {
 #endif
 
 // ---------------------------------------- Spectrum Visualization Processor ----------------------------------------
-DLL_EXPORT RET_ERR CreateSpectrumVisProcessor(uint32 FrameSize)
+DLL_EXPORT RET_ERR CreateSpectrumVisProcessor(uint32 FrameSize, uint32 fftFrameSize)
 {
-  ASPLIB_ERR err = g_SpectrumVisProcessor.Create(g_Configurator, FrameSize);
+  ASPLIB_ERR err = g_SpectrumVisProcessor.Create(g_Configurator, FrameSize, fftFrameSize);
   if (err != ASPLIB_ERR_NO_ERROR)
   {
     string errStr = string(ASPLIB_LOGGING_TAG) + string("Error! Failed to create SpectrumVisProcessor.\n");
@@ -108,7 +108,7 @@ DLL_EXPORT RET_ERR ProcessSpectrumVisProcessor(single *In)
   {
     return ERR_FATAL_ERROR;
   }
-  std::copy(g_InternalBuffer, g_InternalBuffer + g_FrameSize, (float*)In);
+  std::copy_n(g_InternalBuffer, g_FrameSize, (float*)In);
 
   return ERR_NO_ERROR;
 }
