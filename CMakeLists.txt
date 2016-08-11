@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
 
-
-
 project(asplib_playground VERSION 1.0)
 # TODO solve 'Enable C++ exceptions' to 'NO' and I got warning: warning C4530: C++ exception handler used, 
 #             but unwind semantics are not enabled. Specify /EHsc'
@@ -9,18 +7,15 @@ project(asplib_playground VERSION 1.0)
 
 # make sure CMAKE_PREFIX_PATH is set
 file(TO_CMAKE_PATH "${CMAKE_PREFIX_PATH}" CMAKE_PREFIX_PATH)
-#list(APPEND CMAKE_PREFIX_PATH "${CMAKE_INSTALL_PREFIX}/depends/out")
 message(STATUS "CMAKE_BINARY_DIR=${CMAKE_BINARY_DIR}")
-#set(CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR}/depends/output/)
-#set(CMAKE_PREFIX_PATH D:/DevProjects/myLibs/asplib_playground/build_VS2013_x64/depends/output/lib/cmake/asplib-1.0)
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR}/depends/output/)
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR}/depends/output/lib)
 
-include(cmake/gitCloneProject.cmake)
+include(cmake/cmake_helpers/gitCloneProject.cmake)
+set(ASPLIB_MODULES_TO_BUILD SpectrumVisProcessor Biquad ComputeDeviceInfo)
 git_clone_project(PROJ                asplib
                   GIT_REPOSITORY      https://github.com/AchimTuran/asplib
                   GIT_TAG             add-spectrum-vis-processor)
-set(ASPLIB_MODULES_TO_BUILD SpectrumVisProcessor Biquad ComputeDeviceInfo)
 add_subdirectory(${asplib_SOURCE_DIR} ${asplib_BINARY_DIR})
 
 include(cmake/asplib_helpers.cmake)
