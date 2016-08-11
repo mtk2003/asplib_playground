@@ -24,7 +24,7 @@
 
 
 
-function asplib_createSpectrumVisProcessor(FrameSize)
+function asplib_createSpectrumVisProcessor(FrameSize, fftFrameSize)
 %ASPLIB_CREATESPECTRUMVISPROCESSOR Summary of this function goes here
 %   Detailed explanation goes here
   if not(libisloaded('SpectrumVisProcessorDll'))
@@ -33,5 +33,5 @@ function asplib_createSpectrumVisProcessor(FrameSize)
   end
     
     % ToDo evaluate err
-	[ret] = calllib('SpectrumVisProcessorDll', 'CreateSpectrumVisProcessor', uint32(FrameSize));
+	[ret] = calllib('SpectrumVisProcessorDll', 'CreateSpectrumVisProcessor', uint32(FrameSize), uint32(fftFrameSize));
 end
