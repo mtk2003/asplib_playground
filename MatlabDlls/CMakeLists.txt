@@ -1,2 +1,3 @@
 add_subdirectory(Biquad)
 add_subdirectory(SpectrumVisProcessor)
+add_subdirectory(Compressor)
