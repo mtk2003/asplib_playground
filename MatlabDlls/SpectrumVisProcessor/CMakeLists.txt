@@ -1,7 +1,7 @@
 # sets the solution name
 project(SpectrumVisProcessorDll)
 
-find_package(Matlab 2.1 REQUIRED)
+find_package(Matlab 8.1 REQUIRED)
 
 # set here further source and header files, which should be relative to this file
 set(SOURCES SpectrumVisProcessorDll.cpp)
