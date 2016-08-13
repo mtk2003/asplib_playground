@@ -4,9 +4,11 @@ project(CompressorDll)
 find_package(Matlab 8.1 REQUIRED)
 
 # set here further source and header files, which should be relative to this file
-set(SOURCES CompressorDll.cpp)
+set(SOURCES CompressorDll.cpp
+            Compressor.cpp)
 
 set(HEADERS CompressorDll.h
+            Compressor.hpp
             ${CMAKE_CURRENT_SOURCE_DIR}/../Common/typedefs.h)
 
 # this will create filters in the visual studio solution
@@ -32,7 +34,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 target_compile_definitions(${PROJECT_NAME} PRIVATE )
 
 # link against asplib SpectrumVisProcessor component
-target_link_libraries(${PROJECT_NAME} ${MATLAB_MEX_LIBRARY} ${MATLAB_MX_LIBRARY})
+target_link_libraries(${PROJECT_NAME} asplib::Core ${MATLAB_MEX_LIBRARY} ${MATLAB_MX_LIBRARY})
 # sets the exectuable output file name
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
 
