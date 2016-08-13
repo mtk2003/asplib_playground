@@ -1,4 +1,4 @@
-% this scripts loads the SpectrumVisProcessorDll and shows the loaded dll functions in the workspace
+% this scripts loads the CompressorDll and shows the loaded dll functions in the workspace
 
 
 %/*
@@ -31,21 +31,21 @@ clear all;
 % load asplib_MatlabDll
 addpath(fullfile(pwd,'bin')) %add bin folder to path
 
-dll = 'SpectrumVisProcessorDll';
-dllHeader = 'SpectrumVisProcessorDll.h';
+dll = 'CompressorDll';
+dllHeader = 'CompressorDll.h';
 
-if (libisloaded('SpectrumVisProcessorDll'))
-  disp('[asplib] Reloading SpectrumVisProcessorDll');
-  calllib('SpectrumVisProcessorDll', 'DestroySpectrumVisProcessor')
-  unloadlibrary('SpectrumVisProcessorDll');
+if (libisloaded('CompressorDll'))
+  disp('[asplib] Reloading CompressorDll');
+  calllib('CompressorDll', 'DestroyCompressor')
+  unloadlibrary('CompressorDll');
 end
 
 %hfile = fullfile(matlabroot,'extern','include','matrix.h');
 %for details of the loadlibrary function see:
 %http://www.mathworks.de/de/help/matlab/ref/loadlibrary.html
-[dllnotfound, dllwarnings] = loadlibrary(dll, dllHeader, 'alias', 'SpectrumVisProcessorDll');
+[dllnotfound, dllwarnings] = loadlibrary(dll, dllHeader, 'alias', 'CompressorDll');
 
 libfunctions(dll) % show all available dll functions
-%libfunctionsview SpectrumVisProcessorDll % show dll function signatures
+%libfunctionsview CompressorDll % show dll function signatures
 
-disp('[asplib] Successful loaded SpectrumVisProcessorDll');
+disp('[asplib] Successful loaded CompressorDll');

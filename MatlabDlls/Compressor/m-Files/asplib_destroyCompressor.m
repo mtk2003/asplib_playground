@@ -1,4 +1,4 @@
-% this script destroys the SpectrumVisProcessor
+% this script destroys the Compressor
 
 %/*
 % * Copyright (C) 2014 Achim Turan, Achim.Turan@o2online.de
@@ -24,14 +24,14 @@
 
 
 
-function asplib_destroySpectrumVisProcessor()
-%ASPLIB_DESTROYSPECTRUMVISPROCESSOR Summary of this function goes here
+function asplib_destroyCompressor()
+%ASPLIB_DESTROYCompressor Summary of this function goes here
 %   Detailed explanation goes here
-  if not(libisloaded('SpectrumVisProcessorDll'))
-    disp('[asplib] SpectrumVisProcessorDll is not loaded! Please run asplib_load_SpectrumVisProcessorDll.m first!');
+  if not(libisloaded('CompressorDll'))
+    disp('[asplib] CompressorDll is not loaded! Please run asplib_load_CompressorDll.m first!');
     return;
   end
     
   % ToDo evaluate err
-	[ret] = calllib('SpectrumVisProcessorDll', 'DestroySpectrumVisProcessor');
+	[ret] = calllib('CompressorDll', 'destroy_Compressor');
 end

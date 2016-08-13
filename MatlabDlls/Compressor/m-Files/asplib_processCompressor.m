@@ -1,4 +1,4 @@
-% this script processes float samples with the SpectrumVisProcessor module from asplib
+% this script processes float samples with the Compressor module from asplib
 
 %/*
 % * Copyright (C) 2014 Achim Turan, Achim.Turan@o2online.de
@@ -23,16 +23,16 @@
 % */
 
 
-function [Out] = asplib_processSpectrumVisProcessor(In)
+function [Out] = asplib_processCompressor(In)
 %TEST Summary of this function goes here
 %   Detailed explanation goes here
-	if not(libisloaded('SpectrumVisProcessorDll'))
-    disp('[asplib] SpectrumVisProcessorDll is not loaded! Please run asplib_load_SpectrumVisProcessorDll.m first!');
+	if not(libisloaded('CompressorDll'))
+    disp('[asplib] CompressorDll is not loaded! Please run asplib_load_CompressorDll.m first!');
     return;
   end
 
 	pIn = libpointer('singlePtr', In);
 	
 	% ToDo evaluate err
-	[err, Out] = calllib('SpectrumVisProcessorDll', 'ProcessSpectrumVisProcessor', pIn);
+	[err, Out] = calllib('CompressorDll', 'process_Compressor', pIn);
 end

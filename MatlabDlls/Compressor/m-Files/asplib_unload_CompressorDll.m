@@ -1,4 +1,4 @@
-% this script unloads the SpectrumVisProcessorDll and releases all requested memory
+% this script unloads the CompressorDll and releases all requested memory
 
 %/*
 % * Copyright (C) 2014 Achim Turan, Achim.Turan@o2online.de
@@ -24,10 +24,10 @@
 
 
 
-if (libisloaded('SpectrumVisProcessorDll'))
-  calllib('SpectrumVisProcessorDll', 'DestroySpectrumVisProcessor')
-  unloadlibrary('SpectrumVisProcessorDll');
-  disp('[asplib] unloaded SpectrumVisProcessorDll');
+if (libisloaded('CompressorDll'))
+  calllib('CompressorDll', 'DestroyCompressor')
+  unloadlibrary('CompressorDll');
+  disp('[asplib] unloaded CompressorDll');
 else
-  disp('[asplib] SpectrumVisProcessorDll was already unloaded');
+  disp('[asplib] CompressorDll was already unloaded');
 end

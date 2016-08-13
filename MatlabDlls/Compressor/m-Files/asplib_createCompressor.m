@@ -1,4 +1,4 @@
-% this script creates the SpectrumVisProcessor
+% this script creates the Compressor
 
 %/*
 % * Copyright (C) 2014 Achim Turan, Achim.Turan@o2online.de
@@ -24,14 +24,14 @@
 
 
 
-function asplib_createSpectrumVisProcessor(FrameSize, fftFrameSize)
-%ASPLIB_CREATESPECTRUMVISPROCESSOR Summary of this function goes here
+function asplib_createCompressor(FrameSize, SampleFrequency)
+%ASPLIB_CREATECompressor Summary of this function goes here
 %   Detailed explanation goes here
-  if not(libisloaded('SpectrumVisProcessorDll'))
-    disp('[asplib] SpectrumVisProcessorDll is not loaded! Please run asplib_load_SpectrumVisProcessorDll.m first!');
+  if not(libisloaded('CompressorDll'))
+    disp('[asplib] CompressorDll is not loaded! Please run asplib_load_CompressorDll.m first!');
     return;
   end
     
     % ToDo evaluate err
-	[ret] = calllib('SpectrumVisProcessorDll', 'CreateSpectrumVisProcessor', uint32(FrameSize), uint32(fftFrameSize));
+	[ret] = calllib('CompressorDll', 'create_Compressor', uint32(FrameSize), uint32(SampleFrequency));
 end
