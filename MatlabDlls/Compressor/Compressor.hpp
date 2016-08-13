@@ -34,13 +34,23 @@ const int ASPLIB_EXTENDED_STRUCT_CompressorOptions = ASPLIB_EXTENDED_STRUCT_Comp
 
 struct CompressorOptions : ASPLIB_EXTENDED_STRUCT(CompressorOptions)
 {
-  typedef enum {HARD_CLIPPING, SOFT_CLIPPING, TANH};
+  typedef enum
+  {
+    COMPRESSION_INVALID = -1,
+    
+    COMPRESSION_HARD_CLIPPING,
+    COMPRESSION_SOFT_CLIPPING,
+    COMPRESSION_TANH,
+
+    COMPRESSION_MAX
+  } eGainCurve_t;
 
   long double tauRelease = 4.0*E_m3; // [s]
   long double tauAttack = 1.0*E_m3;  // [s]
   long double threshold = -3;        // [dB] = 20*log10
   long double compressionRatio;      // compression characteristic
   long double kneeWidth;             // [dB] = 20*log10
+  eGainCurve_t gainCurve;
 
   CompressorOptions() : ASPLIB_EXTENDED_STRUCT_REGISTER(ASPLIB_EXTENDED_STRUCT_TGammaCorrectorOptions)
   {
@@ -49,6 +59,7 @@ struct CompressorOptions : ASPLIB_EXTENDED_STRUCT(CompressorOptions)
     threshold         = -3;
     compressionRatio  = 10.0;
     kneeWidth         = 0.0;
+    gainCurve = COMPRESSION_HARD_CLIPPING;
   }
 };
 
@@ -74,5 +85,6 @@ private:
   float m_Array[1000];
 
   float m_yL_old;
+  CompressorOptions::eGainCurve_t m_GainCurve;
 };
 }

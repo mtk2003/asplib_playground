@@ -23,7 +23,7 @@
 
 
 #include "Compressor.hpp"
-#include <math.h>
+#include <cmath>
 
 namespace asplib
 {
@@ -66,6 +66,7 @@ ASPLIB_ERR CCompressor::Create(uint32_t FrameSize, uint32_t SampleFrequency, voi
     options.tauAttack         = pOptions->tauAttack;
     options.threshold         = pOptions->threshold;
     options.compressionRatio  = pOptions->compressionRatio;
+    m_GainCurve               = pOptions->gainCurve;
   }
 
   if (FrameSize <= 0 || SampleFrequency <= 0)
@@ -80,6 +81,7 @@ ASPLIB_ERR CCompressor::Create(uint32_t FrameSize, uint32_t SampleFrequency, voi
 
   m_Threshold        = options.threshold;
   m_CompressionRatio = options.compressionRatio;
+  m_GainCurve        = options.gainCurve;
 
   return ASPLIB_ERR_NO_ERROR;
 }
@@ -117,8 +119,9 @@ ASPLIB_ERR CCompressor::Process(void *In, void *Out)
 
     switch (m_GainCurve)
     {
-      case :
-      yG = function();
+      case CompressorOptions::COMPRESSION_HARD_CLIPPING:
+	      // TODO
+        //yG = function();
       break;
     }
 
