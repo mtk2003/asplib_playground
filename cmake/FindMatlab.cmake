@@ -46,7 +46,8 @@ if(WIN32)
       message(STATUS "PACKAGE_VERSION:${PACKAGE_VERSION}")
       message(STATUS "Matlab_VERSION:${Matlab_VERSION}")
       message(STATUS "Matlab_FIND_VERSION:${Matlab_FIND_VERSION}")
-      set(MATLAB_ROOT "[HKEY_LOCAL_MACHINE\\SOFTWARE\\MathWorks\\MATLAB\\${Matlab_FIND_VERSION};MATLABROOT]/extern/lib/win64/microsoft")
+      set(MATLAB_ROOT "[HKEY_LOCAL_MACHINE\\SOFTWARE\\MathWorks\\MATLAB Production Server\\${Matlab_FIND_VERSION};MATLABROOT]/extern/lib/win64/microsoft")
+	  message(STATUS "MATLAB_ROOT=${MATLAB_ROOT}")
     else()
       if(${CMAKE_GENERATOR} MATCHES "Borland")
         # Same here, there are also: bcc50 and bcc51 directories
@@ -73,7 +74,7 @@ if(WIN32)
 
   find_path(MATLAB_INCLUDE_DIR
     "mex.h"
-    "[HKEY_LOCAL_MACHINE\\SOFTWARE\\MathWorks\\MATLAB\\${Matlab_FIND_VERSION};MATLABROOT]/extern/include"
+    "[HKEY_LOCAL_MACHINE\\SOFTWARE\\MathWorks\\MATLAB Production Server\\${Matlab_FIND_VERSION};MATLABROOT]/extern/include"
     )
 else()
   if(CMAKE_SIZEOF_VOID_P EQUAL 4)
