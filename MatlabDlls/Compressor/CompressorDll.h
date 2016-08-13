@@ -52,8 +52,8 @@
 extern "C" {
 #endif
 
-DLL_EXPORT RET_ERR create_Compressor(uint32 BiquadAmount);
-DLL_EXPORT RET_ERR process_Compressor(single *Data, uint32 MaxFrames);
+DLL_EXPORT RET_ERR create_Compressor(uint32 FrameSize, uint32 SampleFrequency);
+DLL_EXPORT RET_ERR process_Compressor(single *In);
 DLL_EXPORT void destroy_Compressor();
 //DLL_EXPORT RET_ERR set_BiquadGain(uint32 BiquadIdx, single Gain);
 //DLL_EXPORT RET_ERR set_BiquadGains(single Gain);
