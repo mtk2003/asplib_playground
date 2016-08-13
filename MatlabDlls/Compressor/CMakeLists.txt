@@ -1,7 +1,7 @@
 # sets the solution name
 project(CompressorDll)
 
-find_package(Matlab 8.1 REQUIRED)
+find_package(Matlab 2.1 REQUIRED)
 
 # set here further source and header files, which should be relative to this file
 set(SOURCES CompressorDll.cpp
@@ -24,6 +24,8 @@ message(STATUS "MATLAB_WKS:${MATLAB_WKS}")
 add_library(${PROJECT_NAME} SHARED ${SOURCES} ${HEADERS})
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE ASPLIB_DLL_FUNCTION_EXPORT=1 _SCL_SECURE_NO_WARNINGS)
+
+message(STATUS "MATLAB_INCLUDE_DIR=${MATLAB_INCLUDE_DIR}")
 
 # add include directories
 target_include_directories(${PROJECT_NAME} PRIVATE
