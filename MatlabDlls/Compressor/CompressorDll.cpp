@@ -29,23 +29,16 @@ using namespace std;
 #include <mex.h>
 
 #include "CompressorDll.h"
+#include "Compressor.hpp"
 
-// buffers
-single *g_Inbuffers = NULL;
-single *g_Outbuffers = NULL;
-single **g_Channels = NULL;
+asplib::CCompressor g_Compressor;
 
-// signal processing parameters
-unsigned int g_MaxChannels = 0;     // max in-/output channels
-unsigned int g_MaxFrameSize = 0;    // max in-/output framelength
-single g_SampleFrequency = 0.0f;    // sample frequency
+// ---------- global variables ---------
+float *g_InternalBuffer = nullptr;
 
-
-// matlab <--> C/C++ control variables
-bool g_InitSuccess = false;
-
-// Biquad helper function prototypes
-void destroy_Biquads();
+// --------- global SpectrumVisProcessor variables --------- 
+uint32_t                          g_FrameSize = 0;
+bool                              g_IsCreated = false;
 
 
 // ---------------------------------------- Biquad helper functions ----------------------------------------
@@ -54,100 +47,54 @@ void destroy_Biquads();
 extern "C" {
 #endif
   // ---------------------------------------- Biquad functions ----------------------------------------
-  DLL_EXPORT RET_ERR create_Compressor(uint32 BiquadAmount)
+  DLL_EXPORT RET_ERR create_Compressor(uint32 FrameSize, uint32 SampleFrequency)
   {
-    mexPrintf("%ssuccessful created compressor handle with\n", ASPLIB_LOGGING_TAG);
-
-    return ERR_NO_ERROR;
-  }
-
-  DLL_EXPORT RET_ERR process_Compressor(single *Data, uint32 MaxFrames)
-  {
-    if (Data == NULL || !MaxFrames)
+    ASPLIB_ERR err = g_Compressor.Create(FrameSize, SampleFrequency);
+    if (err != ASPLIB_ERR_NO_ERROR)
     {
-      string errStr = string(ASPLIB_LOGGING_TAG) + string("Error! Failed to created biquad handle.\n");
+      string errStr = string(ASPLIB_LOGGING_TAG) + string("Error! Failed to create SpectrumVisProcessor.\n");
       mexErrMsgTxt(errStr.c_str());
       return ERR_INVALID_INPUT;
     }
 
-//    if (!g_BiquadHandle || !g_InitSuccess)
-//    {
-//      string errStr = string(ASPLIB_LOGGING_TAG) + string("Error! BiquadDll is not correctly initialized.\n");
-//      mexErrMsgTxt(errStr.c_str());
-//      return ERR_FATAL_ERROR;
-//    }
-
-    //// copy Data to internal buffer
-    //memcpy(g_Inbuffers, Data, sizeof(single)*g_MaxChannels*g_MaxFrameSize);
-
-    // process samples
-  //  CBiquadFactory::calc_BiquadSamples(g_BiquadHandle, Data, Data, MaxFrames);
-    //CBiquadFactory::calc_BiquadSamples(g_BiquadHandle, g_Inbuffers, g_Outbuffers, g_MaxFrameSize);
-    //memcpy(g_Outbuffers, g_Inbuffers, sizeof(single)*g_MaxChannels*g_MaxFrameSize);
-
-    //// copy from internal output to Data
-    //memcpy(g_Outbuffers, Data, sizeof(single)*g_MaxChannels*g_MaxFrameSize);
+    g_IsCreated = true;
+    g_InternalBuffer = new float[FrameSize];
 
     return ERR_NO_ERROR;
   }
 
-  DLL_EXPORT RET_ERR init_asplib(single SampleFrequency, uint32 MaxChannels, uint32 MaxFrameSize)
+  DLL_EXPORT RET_ERR process_Compressor(single *In)
   {
-    if (MaxChannels == 0 || MaxFrameSize == 0 || SampleFrequency <= 0.0f)
+    if (!g_IsCreated)
     {
-      string errStr = string(ASPLIB_LOGGING_TAG) + string("Error! MaxFrames == 0 or MaxChannels == 0 or MaxFrameSize == 0 or ProcessingData_fA <= 0.0f\n");
+      string errStr = string(ASPLIB_LOGGING_TAG) + string("Error! SpectrumVisProcessor is not created.\n");
       mexErrMsgTxt(errStr.c_str());
-      return ERR_INVALID_INPUT;
+      return ERR_NOT_INIT;
     }
 
-    mexPrintf("%sinitialize BiquadDll\n", ASPLIB_LOGGING_TAG);
-    g_MaxChannels = MaxChannels;
-    g_MaxFrameSize = MaxFrameSize;
-    g_SampleFrequency = SampleFrequency;
-
-    // create internal buffers
-    g_Inbuffers = new single[g_MaxChannels*g_MaxFrameSize];
-    g_Outbuffers = new single[g_MaxChannels*g_MaxFrameSize];
-    g_Channels = new single*[g_MaxChannels];
-    if (!g_Inbuffers || !g_Outbuffers || !g_Channels)
+    ASPLIB_ERR err = g_Compressor.Process(In, g_InternalBuffer);
+    if (err != ASPLIB_ERR_NO_ERROR)
     {
-      string errStr = string(ASPLIB_LOGGING_TAG) + string("Error! Could not create internal buffers. Not enough free memory?\n");
-      mexErrMsgTxt(errStr.c_str());
-      delete[] g_Inbuffers;
-      delete[] g_Outbuffers;
-      delete[] g_Channels;
       return ERR_FATAL_ERROR;
     }
-
-    for (unsigned int ii = 0; ii < g_MaxChannels; ii++)
-    {
-      g_Channels[ii] = &g_Outbuffers[ii*g_MaxFrameSize];
-    }
-
-    g_InitSuccess = true;
+    std::copy_n(g_InternalBuffer, g_FrameSize, (float*)In);
 
     return ERR_NO_ERROR;
   }
 
   DLL_EXPORT void destroy_Compressor()
   {
-    mexPrintf("%sdestroying BiquadDll\n", ASPLIB_LOGGING_TAG);
+    delete[] g_InternalBuffer;
+    g_InternalBuffer = nullptr;
 
-    delete[] g_Channels;
-    g_Channels = NULL;
+    g_FrameSize = 0;
 
-    delete[] g_Inbuffers;
-    g_Inbuffers = NULL;
-
-    delete[] g_Outbuffers;
-    g_Outbuffers = NULL;
-
-    g_SampleFrequency = 0.0f;
-    g_Channels = 0;
-    g_MaxChannels = 0;
-    g_InitSuccess = false;
-
-    mexPrintf("%sdestroyed BiquadDll\n", ASPLIB_LOGGING_TAG);
+    ASPLIB_ERR err = g_Compressor.Destroy();
+    if (err != ASPLIB_ERR_NO_ERROR)
+    {
+      string errStr = string(ASPLIB_LOGGING_TAG) + string("Error! Failed to destroy Compressor.\n");
+      mexErrMsgTxt(errStr.c_str());
+    }
   }
 #ifdef __cplusplus
 }
